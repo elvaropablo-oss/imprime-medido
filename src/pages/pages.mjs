@@ -1,0 +1,63 @@
+import { breadcrumbs, hero, linkButton } from '../templates/site.mjs';
+
+const crumb = (label, path) => breadcrumbs([{ label: 'Inicio', path: '' }, { label, path }]);
+const card = (title, text, path, label = 'Abrir herramienta') => `<article class="card"><h2>${title}</h2><p>${text}</p>${linkButton(path, label)}</article>`;
+const field = (label, name, value, suffix) => `<label>${label}<span class="input-row"><input name="${name}" value="${value}" inputmode="decimal" required><span>${suffix}</span></span></label>`;
+const error = '<div class="error" data-error role="alert" tabindex="-1" hidden></div>';
+
+export const pages = [
+  {
+    path: '', h1: 'Imprime etiquetas y plantillas con medidas comprobables', title: 'ImprimeMedido: etiquetas y plantillas a tamaño real', description: 'Crea hojas de etiquetas, calibra la escala de tu impresora y genera rectángulos con medidas exactas en milímetros.',
+    schema: { '@context': 'https://schema.org', '@type': 'WebSite', name: 'ImprimeMedido', url: 'https://elvaropablo-oss.github.io/imprime-medido/', inLanguage: 'es-ES' },
+    content: `${hero('Del milímetro al papel', 'Imprime etiquetas y plantillas con medidas comprobables', 'Configura una hoja, imprime al 100 % y verifica el resultado con una regla. No necesitas instalar programas ni subir archivos.', `${linkButton('crear-etiquetas/', 'Crear etiquetas')}${linkButton('calibrar-impresora/', 'Comprobar mi impresora', true)}`)}
+      <section class="section"><div class="section-heading"><p class="eyebrow">Tres pasos verificables</p><h2>Diseña desde la medida física</h2></div><div class="card-grid">${card('Calibrar la escala', 'Imprime un cuadrado de control y calcula la corrección horizontal y vertical.', 'calibrar-impresora/')}${card('Crear una hoja de etiquetas', 'Ajusta papel, márgenes, tamaño y separación; comprueba cuántas caben.', 'crear-etiquetas/')}${card('Imprimir una medida exacta', 'Genera una caja o plantilla rectangular con corrección independiente por eje.', 'imprimir-medida-exacta/')}</div></section>
+      <section class="section split"><div><p class="eyebrow">La regla decide</p><h2>“100 %” es el inicio, no la prueba final</h2><p>El navegador y el controlador de la impresora pueden reducir el contenido. Cada salida incluye medidas explícitas para que puedas comprobarla antes de usar papel adhesivo o material caro.</p></div><aside class="sample"><p>Cuadrado esperado</p><strong>100 × 100 mm</strong><p>Si mide 98 × 99 mm, la corrección calculada es 102,041 % × 101,010 %.</p></aside></section>`
+  },
+  {
+    path: 'herramientas', h1: 'Herramientas para imprimir a medida', title: 'Herramientas de impresión a medida | ImprimeMedido', description: 'Calculadoras para calibrar impresoras, crear etiquetas y preparar plantillas de tamaño exacto.',
+    content: `${crumb('Herramientas', 'herramientas/')} ${hero('Directorio', 'Herramientas para imprimir a medida', 'Empieza calibrando si la medida física es crítica.')}
+      <section class="section card-grid">${card('Calibrar impresora', 'Compara una medida esperada con la medida real en dos ejes.', 'calibrar-impresora/')}${card('Crear etiquetas', 'Genera una retícula personalizada para A4 o Letter.', 'crear-etiquetas/')}${card('Medida exacta', 'Crea un rectángulo imprimible con corrección de escala.', 'imprimir-medida-exacta/')}</section>`
+  },
+  {
+    path: 'calibrar-impresora', tool: true, h1: 'Calibra la escala de impresión', title: 'Calibrar escala de impresora al 100 % | ImprimeMedido', description: 'Imprime un cuadrado de 100 mm, mídelo y calcula una corrección separada para ancho y alto.',
+    content: `${crumb('Calibrar impresora', 'calibrar-impresora/')} ${hero('Prueba antes de gastar papel', 'Calibra la escala de impresión', 'Imprime el patrón al 100 % o tamaño real, mide el exterior del cuadrado y escribe lo que obtuviste.')}
+      <section class="tool-layout"><form id="calibration-form" class="tool-card"><fieldset><legend>Medición del patrón</legend>${field('Medida esperada', 'expected', '100', 'mm')}${field('Ancho que has medido', 'measuredX', '98', 'mm')}${field('Alto que has medido', 'measuredY', '99', 'mm')}</fieldset>${error}<button class="button" type="submit">Calcular corrección</button><button class="button button--quiet" type="button" data-print>Imprimir patrón de prueba</button></form><section id="calibration-result" class="result" tabindex="-1" aria-live="polite" hidden></section></section>
+      <section class="print-sheet calibration-sheet"><div class="calibration-square"><strong>100 × 100 mm</strong><span>Mide el borde exterior</span></div><div class="scale-line"><span>0</span><span>50 mm</span><span>100 mm</span></div></section>
+      <article class="section prose"><h2>Configuración recomendada</h2><p>Elige “Tamaño real” o escala 100 % y desactiva “Ajustar a página”. Conserva el mismo navegador, visor y controlador cuando apliques una corrección.</p><h2>Por qué hay dos porcentajes</h2><p>Una desviación puede ser distinta horizontal y verticalmente. La herramienta conserva ambos valores en lugar de ocultarlos en una media.</p></article>`
+  },
+  {
+    path: 'crear-etiquetas', tool: true, h1: 'Crea una hoja de etiquetas personalizadas', title: 'Crear etiquetas de cualquier medida en A4 | ImprimeMedido', description: 'Calcula filas y columnas de etiquetas usando medidas reales, márgenes y separación para imprimir una plantilla.',
+    content: `${crumb('Crear etiquetas', 'crear-etiquetas/')} ${hero('Retícula personalizada', 'Crea una hoja de etiquetas personalizadas', 'Introduce las medidas de tu hoja adhesiva o de corte. La vista imprimible se genera en milímetros.')}
+      <style id="page-style"></style><section class="tool-layout"><form id="labels-form" class="tool-card"><fieldset><legend>Papel y márgenes</legend><label>Tamaño<select name="paper"><option value="a4">A4 · 210 × 297 mm</option><option value="letter">Letter · 215,9 × 279,4 mm</option></select></label>${field('Margen lateral mínimo', 'marginX', '10', 'mm')}${field('Margen superior e inferior', 'marginY', '10', 'mm')}</fieldset><fieldset><legend>Etiqueta</legend>${field('Ancho', 'labelWidth', '50', 'mm')}${field('Alto', 'labelHeight', '30', 'mm')}${field('Separación horizontal', 'gapX', '5', 'mm')}${field('Separación vertical', 'gapY', '5', 'mm')}<label>Texto de ejemplo<input name="content" value="Mi etiqueta" maxlength="120"></label></fieldset>${error}<button class="button" type="submit">Generar hoja</button></form><section id="labels-result" class="result" tabindex="-1" aria-live="polite" hidden></section></section>
+      <section id="label-sheet" class="print-sheet label-sheet" hidden></section>
+      <article class="section prose"><h2>Antes de usar hojas precortadas</h2><p>Haz primero una prueba en papel normal y colócala detrás de la hoja de etiquetas a contraluz. Si existe desplazamiento constante, revisa los márgenes; si el error crece a lo largo de la página, calibra la escala.</p></article>`
+  },
+  {
+    path: 'imprimir-medida-exacta', tool: true, h1: 'Imprime un rectángulo con medida exacta', title: 'Imprimir rectángulo a tamaño real | ImprimeMedido', description: 'Genera una caja imprimible de anchura y altura exactas, con corrección opcional de escala por eje.',
+    content: `${crumb('Medida exacta', 'imprimir-medida-exacta/')} ${hero('Plantilla rectangular', 'Imprime un rectángulo con medida exacta', 'Úsalo como guía de corte, comprobación o plantilla. Aplica una corrección solo si antes has medido una impresión de control.')}
+      <section class="tool-layout"><form id="exact-form" class="tool-card"><fieldset><legend>Medida final</legend>${field('Ancho', 'width', '50', 'mm')}${field('Alto', 'height', '80', 'mm')}</fieldset><fieldset><legend>Corrección opcional</legend>${field('Escala horizontal', 'xPercent', '100', '%')}${field('Escala vertical', 'yPercent', '100', '%')}</fieldset>${error}<button class="button" type="submit">Preparar plantilla</button></form><section id="exact-result" class="result" tabindex="-1" aria-live="polite" hidden></section></section>
+      <section id="exact-sheet" class="print-sheet exact-sheet" hidden><div id="exact-box" class="exact-box"></div></section>
+      <article class="section prose"><h2>Qué significa la corrección</h2><p>Si una prueba de 100 mm sale de 98 mm, generar 102,041 mm compensa esa reducción concreta. El objetivo sigue siendo obtener 100 mm físicos después de imprimir.</p><h2>Límite de página</h2><p>La plantilla debe caber dentro del área imprimible. Para tamaños mayores que una hoja se necesita división en mosaico, que queda fuera de esta primera versión.</p></article>`
+  },
+  {
+    path: 'guias/imprimir-tamano-real', h1: 'Cómo imprimir a tamaño real sin que se reduzca', title: 'Cómo imprimir a tamaño real y escala 100 % | ImprimeMedido', description: 'Pasos para evitar Ajustar a página y comprobar las dimensiones finales con una regla.',
+    content: `${crumb('Imprimir a tamaño real', 'guias/imprimir-tamano-real/')} ${hero('Configuración y comprobación', 'Cómo imprimir a tamaño real sin que se reduzca', 'La medida final depende del navegador, el diálogo de impresión, el controlador y la impresora.')}
+      <article class="section prose"><h2>Secuencia recomendada</h2><ol><li>Selecciona el mismo tamaño de papel que has cargado.</li><li>Elige escala 100 % o “Tamaño real”.</li><li>Desactiva “Ajustar”, “Encoger” o “Ajustar al área imprimible”.</li><li>Imprime primero el patrón de 100 mm.</li><li>Mide ancho y alto con una regla fiable.</li><li>Aplica corrección solo si el error se repite.</li></ol><h2>No confundas desplazamiento y escala</h2><p>Si todo mide bien pero aparece movido, corrige márgenes o alimentación. Si cada etiqueta se aleja un poco más, comprueba tamaño de papel y escala.</p>${linkButton('calibrar-impresora/', 'Abrir calibración')}</article>`
+  },
+  {
+    path: 'metodologia', h1: 'Fórmulas y límites de impresión', title: 'Metodología | ImprimeMedido', description: 'Consulta cómo se calculan correcciones, retículas y dimensiones imprimibles.',
+    content: `${crumb('Metodología', 'metodologia/')} ${hero('Cálculos transparentes', 'Fórmulas y límites de impresión', 'Las dimensiones se expresan en milímetros CSS y deben verificarse físicamente.')}
+      <article class="section prose"><h2>Corrección</h2><p>Porcentaje = medida esperada ÷ medida impresa × 100. Se calcula por separado para ancho y alto y se limita a un rango razonable del 80 % al 120 %.</p><h2>Etiquetas</h2><p>Columnas = parte entera de (ancho disponible + separación) ÷ (ancho de etiqueta + separación). Las filas usan la misma relación vertical. El espacio sobrante se reparte entre ambos bordes.</p><h2>Dimensiones físicas</h2><p>CSS define 1 pulgada como 96 píxeles y relaciona las unidades físicas entre sí. Esa relación del documento no garantiza que el controlador imprima sin escalado; por eso la prueba física forma parte del flujo.</p></article>`
+  },
+  {
+    path: 'sobre', h1: 'Sobre ImprimeMedido', title: 'Sobre el proyecto | ImprimeMedido', description: 'Propósito, alcance y límites de ImprimeMedido.',
+    content: `${crumb('Sobre', 'sobre/')} ${hero('Herramientas locales y gratuitas', 'Sobre ImprimeMedido', 'El proyecto ayuda a pasar de milímetros a una hoja imprimible sin cuentas ni archivos enviados.')}
+      <article class="section prose"><h2>Alcance</h2><p>La V1 genera geometría sencilla: pruebas de escala, rectángulos y retículas de etiquetas. No sustituye software de preimpresión ni perfiles profesionales de color.</p><h2>Privacidad</h2><p>El contenido de las etiquetas se procesa en tu navegador y no se envía a un servidor.</p></article>`
+  },
+  {
+    path: 'privacidad', h1: 'Privacidad', title: 'Privacidad | ImprimeMedido', description: 'Información sobre privacidad y almacenamiento en ImprimeMedido.',
+    content: `${crumb('Privacidad', 'privacidad/')} ${hero('Trabajo local', 'Privacidad', 'La creación de plantillas ocurre en este navegador.')}
+      <article class="section prose"><h2>Datos introducidos</h2><p>Las medidas y textos no se suben a un servidor. La última configuración puede guardarse localmente en el navegador.</p><h2>Analítica</h2><p>Esta versión no instala Google Analytics ni servicios publicitarios.</p></article>`
+  },
+  { path: '404', output: '404.html', noindex: true, h1: 'Página no encontrada', title: 'Página no encontrada | ImprimeMedido', description: 'La página solicitada no existe.', content: `${hero('Error 404', 'Página no encontrada', 'La dirección puede contener un error o haber cambiado.', linkButton('', 'Volver al inicio'))}` }
+];
