@@ -28,7 +28,8 @@ if (pixelsForm) {
       const dpi = read(pixelsForm, 'dpi');
       if (direction === 'pixels-to-size') {
         const result = pixelsToPhysical(width, height, dpi);
-        show(document.querySelector('#pixels-result'), `<p class="metric-label">Tamaño de impresión</p><h2>${fmt(result.widthCm, 2)} × ${fmt(result.heightCm, 2)} cm</h2><p>${fmt(result.widthCm * 10, 1)} × ${fmt(result.heightCm * 10, 1)} mm · ${fmt(result.widthInches, 2)} × ${fmt(result.heightInches, 2)} pulgadas a ${fmt(result.dpi, 0)} ppp.</p><p class="note">El dato describe tamaño físico por resolución. La impresora todavía puede aplicar escalado en su diálogo.</p>`);
+        const query = new URLSearchParams({ w: String(result.widthCm * 10), h: String(result.heightCm * 10) });
+        show(document.querySelector('#pixels-result'), `<p class="metric-label">Tamaño de impresión</p><h2>${fmt(result.widthCm, 2)} × ${fmt(result.heightCm, 2)} cm</h2><p>${fmt(result.widthCm * 10, 1)} × ${fmt(result.heightCm * 10, 1)} mm · ${fmt(result.widthInches, 2)} × ${fmt(result.heightInches, 2)} pulgadas a ${fmt(result.dpi, 0)} ppp.</p><a class="button" href="../imprimir-medida-exacta/?${query}">Preparar este tamaño para impresión exacta</a><p class="note">El dato describe tamaño físico por resolución. La impresora todavía puede aplicar escalado en su diálogo.</p>`);
         save({ type: 'pixels-to-size', ...result, savedAt: new Date().toISOString() });
       } else {
         const result = physicalToPixels(width, height, dpi);
@@ -54,6 +55,8 @@ if (exactForm) {
   const params = new URLSearchParams(location.search);
   if (params.has('x')) exactForm.elements.xPercent.value = params.get('x');
   if (params.has('y')) exactForm.elements.yPercent.value = params.get('y');
+  if (params.has('w')) exactForm.elements.width.value = params.get('w');
+  if (params.has('h')) exactForm.elements.height.value = params.get('h');
   exactForm.addEventListener('submit', (event) => {
     event.preventDefault();
     try {
