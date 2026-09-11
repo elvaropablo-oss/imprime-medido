@@ -1,4 +1,4 @@
-import { correctedSize, correctionScale, labelGrid } from './math/print.js';
+import { correctedSize, correctionScale, labelGrid, physicalToPixels, pixelsToPhysical } from './math/print.js';
 
 const read = (form, name) => form.elements[name].value;
 const fmt = (value, digits = 2) => new Intl.NumberFormat('es-ES', { maximumFractionDigits: digits }).format(value);
@@ -10,6 +10,34 @@ const fail = (form, reason) => {
   error.focus();
 };
 const save = (value) => { try { localStorage.setItem('im:v1:settings', JSON.stringify(value)); } catch {} };
+
+const pixelsForm = document.querySelector('#pixels-form');
+if (pixelsForm) {
+  const syncUnit = () => {
+    const unit = pixelsForm.elements.direction.value === 'pixels-to-size' ? 'px' : 'cm';
+    pixelsForm.querySelectorAll('[data-dimension-unit]').forEach((element) => { element.textContent = unit; });
+  };
+  pixelsForm.elements.direction.addEventListener('change', syncUnit);
+  syncUnit();
+  pixelsForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    try {
+      const direction = pixelsForm.elements.direction.value;
+      const width = read(pixelsForm, 'width');
+      const height = read(pixelsForm, 'height');
+      const dpi = read(pixelsForm, 'dpi');
+      if (direction === 'pixels-to-size') {
+        const result = pixelsToPhysical(width, height, dpi);
+        show(document.querySelector('#pixels-result'), `<p class="metric-label">Tamaño de impresión</p><h2>${fmt(result.widthCm, 2)} × ${fmt(result.heightCm, 2)} cm</h2><p>${fmt(result.widthCm * 10, 1)} × ${fmt(result.heightCm * 10, 1)} mm · ${fmt(result.widthInches, 2)} × ${fmt(result.heightInches, 2)} pulgadas a ${fmt(result.dpi, 0)} ppp.</p><p class="note">El dato describe tamaño físico por resolución. La impresora todavía puede aplicar escalado en su diálogo.</p>`);
+        save({ type: 'pixels-to-size', ...result, savedAt: new Date().toISOString() });
+      } else {
+        const result = physicalToPixels(width, height, dpi);
+        show(document.querySelector('#pixels-result'), `<p class="metric-label">Tamaño digital recomendado</p><h2>${result.widthPixels} × ${result.heightPixels} px</h2><p>Para imprimir ${fmt(result.widthCm, 2)} × ${fmt(result.heightCm, 2)} cm a ${fmt(result.dpi, 0)} ppp.</p><p class="note">El redondeo al píxel entero puede cambiar el tamaño físico una fracción de milímetro.</p>`);
+        save({ type: 'size-to-pixels', ...result, savedAt: new Date().toISOString() });
+      }
+    } catch (reason) { fail(pixelsForm, reason); }
+  });
+}
 
 document.querySelector('#calibration-form')?.addEventListener('submit', (event) => {
   event.preventDefault();

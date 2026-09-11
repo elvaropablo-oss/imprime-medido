@@ -47,3 +47,33 @@ export function correctedSize(widthValue, heightValue, xPercentValue = 100, yPer
   if (xPercent < 80 || xPercent > 120 || yPercent < 80 || yPercent > 120) throw new Error('La corrección debe estar entre 80 % y 120 %.');
   return { widthMm: width * xPercent / 100, heightMm: height * yPercent / 100, targetWidth: width, targetHeight: height };
 }
+
+export function pixelsToPhysical(widthValue, heightValue, dpiValue) {
+  const widthPixels = positive(widthValue, 'El ancho en píxeles');
+  const heightPixels = positive(heightValue, 'El alto en píxeles');
+  const dpi = validDpi(dpiValue);
+  const widthInches = widthPixels / dpi;
+  const heightInches = heightPixels / dpi;
+  return {
+    widthPixels, heightPixels, dpi, widthInches, heightInches,
+    widthCm: widthInches * 2.54,
+    heightCm: heightInches * 2.54
+  };
+}
+
+export function physicalToPixels(widthValue, heightValue, dpiValue) {
+  const widthCm = positive(widthValue, 'El ancho en centímetros');
+  const heightCm = positive(heightValue, 'El alto en centímetros');
+  const dpi = validDpi(dpiValue);
+  return {
+    widthCm, heightCm, dpi,
+    widthPixels: Math.round(widthCm / 2.54 * dpi),
+    heightPixels: Math.round(heightCm / 2.54 * dpi)
+  };
+}
+
+function validDpi(value) {
+  const dpi = positive(value, 'La resolución');
+  if (dpi < 36 || dpi > 2400) throw new Error('La resolución debe estar entre 36 y 2.400 ppp.');
+  return dpi;
+}
