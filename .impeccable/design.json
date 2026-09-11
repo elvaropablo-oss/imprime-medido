@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "project": "ImprimeMedido",
+  "northStar": "A compact prepress desk with registration marks, proof sheets and scale annotations.",
+  "palette": {
+    "ink": "#121212",
+    "muted": "#5f5c57",
+    "paper": "#f6f3eb",
+    "sheet": "#fffefa",
+    "cyan": "#00a7c7",
+    "magenta": "#df1267",
+    "yellow": "#ffd324"
+  },
+  "typography": {
+    "display": "Impact / Arial Narrow / Helvetica Neue Condensed",
+    "body": "Arial / Helvetica",
+    "measurements": "Cascadia Mono / Consolas"
+  },
+  "geometry": {
+    "corners": "square",
+    "borders": "1px registration black",
+    "depth": "offset process-colour shadows"
+  },
+  "motion": {
+    "buttonLift": "140ms vertical translate",
+    "reducedMotion": true
+  },
+  "breakpoints": [840, 560],
+  "components": [
+    "registration-mark-logo",
+    "proof-sheet-hero",
+    "production-card-grid",
+    "job-ticket-form",
+    "highlighted-proof-result"
+  ]
+}

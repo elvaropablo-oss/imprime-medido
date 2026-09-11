@@ -16,7 +16,7 @@ document.querySelector('#calibration-form')?.addEventListener('submit', (event) 
   const form = event.currentTarget;
   try {
     const result = correctionScale(read(form, 'expected'), read(form, 'measuredX'), read(form, 'measuredY'));
-    show(document.querySelector('#calibration-result'), `<p class="eyebrow">Corrección calculada</p><h2>${fmt(result.xPercent, 3)} % horizontal<br>${fmt(result.yPercent, 3)} % vertical</h2><p>Guarda estos porcentajes para las otras herramientas. Antes, confirma que el diálogo de impresión estaba en “Tamaño real” o 100 %.</p><a class="button" href="../imprimir-medida-exacta/?x=${encodeURIComponent(result.xPercent)}&y=${encodeURIComponent(result.yPercent)}">Aplicar a una medida</a>`);
+    show(document.querySelector('#calibration-result'), `<p class="metric-label">Corrección calculada</p><h2>${fmt(result.xPercent, 3)} % horizontal<br>${fmt(result.yPercent, 3)} % vertical</h2><p>Guarda estos porcentajes para las otras herramientas. Antes, confirma que el diálogo de impresión estaba en “Tamaño real” o 100 %.</p><a class="button" href="../imprimir-medida-exacta/?x=${encodeURIComponent(result.xPercent)}&y=${encodeURIComponent(result.yPercent)}">Aplicar a una medida</a>`);
     save({ type: 'calibration', ...result, savedAt: new Date().toISOString() });
   } catch (reason) { fail(form, reason); }
 });
@@ -35,7 +35,7 @@ if (exactForm) {
       box.style.height = `${result.heightMm}mm`;
       box.innerHTML = `<strong>${fmt(result.targetWidth)} × ${fmt(result.targetHeight)} mm finales</strong><span>Caja generada: ${fmt(result.widthMm)} × ${fmt(result.heightMm)} mm</span>`;
       document.querySelector('#exact-sheet').hidden = false;
-      show(document.querySelector('#exact-result'), `<p class="eyebrow">Preparado para imprimir</p><h2>${fmt(result.targetWidth)} × ${fmt(result.targetHeight)} mm</h2><p>La caja del documento mide ${fmt(result.widthMm)} × ${fmt(result.heightMm)} mm tras aplicar la corrección.</p><button class="button" type="button" data-print>Imprimir plantilla</button>`);
+      show(document.querySelector('#exact-result'), `<p class="metric-label">Preparado para imprimir</p><h2>${fmt(result.targetWidth)} × ${fmt(result.targetHeight)} mm</h2><p>La caja del documento mide ${fmt(result.widthMm)} × ${fmt(result.heightMm)} mm tras aplicar la corrección.</p><button class="button" type="button" data-print>Imprimir plantilla</button>`);
       save({ type: 'exact', ...result, savedAt: new Date().toISOString() });
     } catch (reason) { fail(exactForm, reason); }
   });
@@ -59,7 +59,7 @@ labelsForm?.addEventListener('submit', (event) => {
     sheet.innerHTML = Array.from({ length: result.total }, () => `<div class="print-label">${escapeHtml(content)}</div>`).join('');
     sheet.hidden = false;
     document.querySelector('#page-style').textContent = `@page { size: ${paper.css}; margin: 0; }`;
-    show(document.querySelector('#labels-result'), `<p class="eyebrow">Hoja calculada</p><h2>${result.total} etiquetas</h2><p>${result.columns} columnas × ${result.rows} filas. Inicio a ${fmt(result.startX)} mm del borde izquierdo y ${fmt(result.startY)} mm del superior.</p><button class="button" type="button" data-print>Imprimir hoja</button>`);
+    show(document.querySelector('#labels-result'), `<p class="metric-label">Hoja calculada</p><h2>${result.total} etiquetas</h2><p>${result.columns} columnas × ${result.rows} filas. Inicio a ${fmt(result.startX)} mm del borde izquierdo y ${fmt(result.startY)} mm del superior.</p><button class="button" type="button" data-print>Imprimir hoja</button>`);
     save({ type: 'labels', ...config, ...result, content, savedAt: new Date().toISOString() });
   } catch (reason) { fail(labelsForm, reason); }
 });
