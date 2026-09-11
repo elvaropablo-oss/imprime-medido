@@ -95,7 +95,16 @@ labelsForm?.addEventListener('submit', (event) => {
   } catch (reason) { fail(labelsForm, reason); }
 });
 
-document.addEventListener('click', (event) => { if (event.target.matches('[data-print]')) window.print(); });
+document.addEventListener('click', (event) => {
+  const button = event.target.closest?.('[data-print]');
+  if (!button) return;
+  event.preventDefault();
+  button.disabled = true;
+  requestAnimationFrame(() => {
+    window.print();
+    setTimeout(() => { button.disabled = false; }, 300);
+  });
+});
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
